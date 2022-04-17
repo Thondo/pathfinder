@@ -1,15 +1,14 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <PathFinder/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import PathFinder from './components/PathFinder.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    PathFinder
   }
 }
 </script>
