@@ -1,6 +1,13 @@
 <template>
   <div
-    :class="{ 'node': true, 'node-finish': this.isFinish, 'node-start': this.isStart, 'node-wall': isWall}"
+    :class="{ 
+      'node': true, 
+      'node-finish': this.isFinish, 
+      'node-start': this.isStart && !this.isFinish, 
+      'node-wall': isWall && !this.isStart && !this.isFinish, 
+      'node-visited': isVisited, 
+      'node-shortest-path': isShortestPath
+    }"
     @onMouseDown="this.onMouseDown"
     @onMouseEnter="this.onMouseEnter"
     @onMouseUp="this.onMouseUp"
@@ -17,13 +24,12 @@ export default {
     isStart: Boolean,
     isFinish: Boolean,
     isWall: Boolean,
+    isShortestPath: Boolean,
+    isVisited: Boolean,
     onMouseDown: String,
     onMouseEnter: String,
     onMouseUp: String
   },
-  mounted() {
-    console.log(this);
-  }
 }
 </script>
 

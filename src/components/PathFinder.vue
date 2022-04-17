@@ -1,4 +1,5 @@
 <template>
+  <button @click="this.visualizeDijkstra()">dijkstra</button>
   <table class="grid">
     <tr v-for="row in this.grid" :key="row.index">
       <th v-for="node in row" :key="node.index">
@@ -8,6 +9,8 @@
           :isStart="node.isStart" 
           :isFinish="node.isFinish" 
           :isWall="node.isWall"
+          :isShortestPath="node.isShortestPath"
+          :isVisited="node.isVisited"
           @mousedown="this.handleMouseDown(node.row, node.col)"
           @mouseenter="this.handleMouseEnter(node.row, node.col)"
           @mouseup="this.handleMouseUp()"
@@ -19,6 +22,7 @@
 
 <script>
 import GridNode from './node/GridNode.vue'
+import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/dijkstra.js'
 
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
@@ -63,7 +67,7 @@ export default {
       };
     },
     getGridWithWallToggled(grid, row, col) {
-      const newGrid = this.grid.slice();
+      const newGrid = grid.slice();
       const node = newGrid[row][col];
       const newNode = {
         ...node,
@@ -84,6 +88,39 @@ export default {
     },
     handleMouseUp() {
       this.mouseIsPressed = !this.mouseIsPressed;
+    },
+    animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+      console.log("animateDijkstra");
+      for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+        if (i === visitedNodesInOrder.length) {
+          setTimeout(() => {
+            this.animateShortestPath(nodesInShortestPathOrder);
+          }, 10 * i);
+          return;
+        }
+        setTimeout(() => {
+          const node = visitedNodesInOrder[i];
+          this.grid[node.row][node.col].isVisited = true;
+        }, 10 * i);
+      }
+    },
+    animateShortestPath(nodesInShortestPathOrder) {
+      console.log("animateShortestPath");
+      for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+        setTimeout(() => {
+          const node = nodesInShortestPathOrder[i];
+          this.grid[node.row][node.col].isVisited = false;
+          this.grid[node.row][node.col].isShortestPath = true;
+        }, 50 * i);
+      }
+    },
+    visualizeDijkstra() {
+      const startNode = this.grid[START_NODE_ROW][START_NODE_COL];
+      const finishNode = this.grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+      const visitedNodesInOrder = dijkstra(this.grid, startNode, finishNode);
+      console.log(visitedNodesInOrder);
+      const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+      this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
     },
   },
   mounted() {
