@@ -1,24 +1,27 @@
 <template>
-  <div class="grid">
-    <div v-for="row in this.grid" :key="row.index">
-      <div v-for="node in row" :key="node.index">
+  <table class="grid">
+    <tr v-for="row in this.grid" :key="row.index">
+      <th v-for="node in row" :key="node.index">
         <GridNode 
           :col="node.col" 
           :row="node.row" 
           :isStart="node.isStart" 
           :isFinish="node.isFinish" 
           :isWall="node.isWall"
+          @mousedown="this.handleMouseDown(node.row, node.col)"
+          @mouseenter="this.handleMouseEnter(node.row, node.col)"
+          @mouseup="this.handleMouseUp()"
         />
-      </div>
-    </div>
-  </div>
+      </th>
+    </tr>
+  </table>
 </template>
 
 <script>
 import GridNode from './node/GridNode.vue'
 
-const START_NODE_ROW = 0;
-const START_NODE_COL = 0;
+const START_NODE_ROW = 10;
+const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
 const FINISH_NODE_COL = 35;
 
@@ -30,8 +33,8 @@ export default {
   data() {
     return {
       grid: [],
-      gridHeight: 40,
-      gridWidth: 40,
+      gridHeight: 20,
+      gridWidth: 50,
       mouseIsPressed: false,
     }
   },
@@ -59,7 +62,29 @@ export default {
         previousNode: null,
       };
     },
-
+    getGridWithWallToggled(grid, row, col) {
+      const newGrid = this.grid.slice();
+      const node = newGrid[row][col];
+      const newNode = {
+        ...node,
+        isWall: !node.isWall,
+      };
+      newGrid[row][col] = newNode;
+      return newGrid;
+    },
+    handleMouseDown(row, col) {
+      const newGrid = this.getGridWithWallToggled(this.grid, row, col);
+      this.grid = newGrid;
+      this.mouseIsPressed = !this.mouseIsPressed;
+    },
+    handleMouseEnter(row, col) {
+      if (!this.mouseIsPressed) return;
+      const newGrid = this.getGridWithWallToggled(this.grid, row, col);
+      this.grid = newGrid;
+    },
+    handleMouseUp() {
+      this.mouseIsPressed = !this.mouseIsPressed;
+    },
   },
   mounted() {
     this.grid = this.getInitialGrid();
