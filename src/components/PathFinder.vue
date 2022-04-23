@@ -1,9 +1,11 @@
 <template>
   <button @click="this.visualizeDijkstra()">dijkstra</button>
+  <button @click="this.initializeGrid()">reset</button>
   <table class="grid">
     <tr v-for="row in this.grid" :key="row.index">
       <th v-for="node in row" :key="node.index">
         <GridNode 
+          :id="this.calcID(node.row, node.col)"
           :col="node.col" 
           :row="node.row" 
           :isStart="node.isStart" 
@@ -43,6 +45,9 @@ export default {
     }
   },
   methods: {
+    initializeGrid() {
+      this.grid = this.getInitialGrid();
+    },
     getInitialGrid() {
       const grid = [];
       for (let row = 0; row < this.gridHeight; row++) {
@@ -118,13 +123,23 @@ export default {
       const startNode = this.grid[START_NODE_ROW][START_NODE_COL];
       const finishNode = this.grid[FINISH_NODE_ROW][FINISH_NODE_COL];
       const visitedNodesInOrder = dijkstra(this.grid, startNode, finishNode);
-      console.log(visitedNodesInOrder);
+      this.setAllNodesUnvisited(this.grid);
       const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
       this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
     },
+    calcID(row, col) {
+      return (row.toString() + col.toString())
+    },
+    setAllNodesUnvisited(grid) {
+      for (const row of grid) {
+        for (const element of row) {
+          element.isVisited = false;
+        }
+      }
+    }
   },
   mounted() {
-    this.grid = this.getInitialGrid();
+    this.initializeGrid();
   }
 }
 </script>

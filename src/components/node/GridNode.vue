@@ -2,9 +2,9 @@
   <div
     :class="{ 
       'node': true, 
-      'node-finish': this.isFinish, 
-      'node-start': this.isStart && !this.isFinish, 
-      'node-wall': isWall && !this.isStart && !this.isFinish, 
+      'node-finish': isFinish, 
+      'node-start': isStart && !isFinish, 
+      'node-wall': isWall && !isStart && !isFinish, 
       'node-visited': isVisited, 
       'node-shortest-path': isShortestPath
     }"
